@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter/cupertino.dart';
 
 class QRCodePage extends StatefulWidget {
   QRCodePage({Key? key}) : super(key: key);
@@ -11,16 +12,6 @@ class QRCodePage extends StatefulWidget {
 class _QRCodePageState extends State<QRCodePage> {
   String ticket = '';
   List<String> tickets = [];
-
-  // readQRCode() async {
-  //   String code = await FlutterBarcodeScanner.scanBarcode(
-  //     '#FFFFFF',
-  //     'Cancel',
-  //     false,
-  //     ScanMode.QR,
-  //   );
-  //   setState(() => ticket = code != '-1' ? code : 'Não validado');
-  // }
 
   readQRCode() async {
     Stream<dynamic>? reader = FlutterBarcodeScanner.getBarcodeStreamReceiver(
@@ -38,6 +29,16 @@ class _QRCodePageState extends State<QRCodePage> {
           });
         },
       );
+  }
+
+  readBarCode() async {
+    String code = await FlutterBarcodeScanner.scanBarcode(
+      '#FFFFFF',
+      'Cancel',
+      false,
+      ScanMode.QR,
+    );
+    setState(() => ticket = code != '-1' ? code : 'Não validado');
   }
 
   @override
@@ -64,8 +65,27 @@ class _QRCodePageState extends State<QRCodePage> {
             ElevatedButton.icon(
               onPressed: readQRCode,
               icon: Icon(Icons.qr_code),
-              label: Text('Validar'),
-            )
+              label: Text('Validar QR CODE'),
+            ),
+            SizedBox(
+              height: 80,
+            ),
+            if (ticket != '')
+              Padding(
+                padding: EdgeInsets.only(bottom: 24.0),
+                child: Text(
+                  //para ler um único code:
+                  'Ticket: $ticket',
+                  //para ler vários codes:
+                  // 'Tickets:${tickets.length} ',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ElevatedButton.icon(
+              onPressed: readBarCode,
+              icon: Icon(Icons.qr_code_scanner_outlined),
+              label: Text('Validar Código de Barras'),
+            ),
           ],
         ),
       ),
